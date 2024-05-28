@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AnnouncementsMapper">
+    
+    <resultMap type="Announcements" id="AnnouncementsResult">
+        <result property="announcementID"    column="announcementID"    />
+        <result property="title"    column="title"    />
+        <result property="content"    column="content"    />
+        <result property="publishedAt"    column="publishedAt"    />
+    </resultMap>
+
+    <sql id="selectAnnouncementsVo">
+        select announcementID, title, content, publishedAt from announcements
+    </sql>
+
+    <select id="selectAnnouncementsList" parameterType="Announcements" resultMap="AnnouncementsResult">
+        <include refid="selectAnnouncementsVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="publishedAt != null "> and publishedAt = #{publishedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectAnnouncementsByAnnouncementID" parameterType="Long" resultMap="AnnouncementsResult">
+        <include refid="selectAnnouncementsVo"/>
+        where announcementID = #{announcementID}
+    </select>
+        
+    <insert id="insertAnnouncements" parameterType="Announcements" useGeneratedKeys="true" keyProperty="announcementID">
+        insert into announcements
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="publishedAt != null">publishedAt,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="publishedAt != null">#{publishedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAnnouncements" parameterType="Announcements">
+        update announcements
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="publishedAt != null">publishedAt = #{publishedAt},</if>
+        </trim>
+        where announcementID = #{announcementID}
+    </update>
+
+    <delete id="deleteAnnouncementsByAnnouncementID" parameterType="Long">
+        delete from announcements where announcementID = #{announcementID}
+    </delete>
+
+    <delete id="deleteAnnouncementsByAnnouncementIDs" parameterType="String">
+        delete from announcements where announcementID in 
+        <foreach item="announcementID" collection="array" open="(" separator="," close=")">
+            #{announcementID}
+        </foreach>
+    </delete>
+</mapper>

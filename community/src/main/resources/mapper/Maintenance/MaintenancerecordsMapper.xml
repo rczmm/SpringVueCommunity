@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MaintenancerecordsMapper">
+    
+    <resultMap type="Maintenancerecords" id="MaintenancerecordsResult">
+        <result property="recordID"    column="recordID"    />
+        <result property="requestID"    column="requestID"    />
+        <result property="repairerName"    column="repairerName"    />
+        <result property="repairTime"    column="repairTime"    />
+        <result property="repairResult"    column="repairResult"    />
+    </resultMap>
+
+    <sql id="selectMaintenancerecordsVo">
+        select recordID, requestID, repairerName, repairTime, repairResult from maintenancerecords
+    </sql>
+
+    <select id="selectMaintenancerecordsList" parameterType="Maintenancerecords" resultMap="MaintenancerecordsResult">
+        <include refid="selectMaintenancerecordsVo"/>
+        <where>  
+            <if test="requestID != null "> and requestID = #{requestID}</if>
+            <if test="repairerName != null  and repairerName != ''"> and repairerName like concat('%', #{repairerName}, '%')</if>
+            <if test="repairTime != null "> and repairTime = #{repairTime}</if>
+            <if test="repairResult != null  and repairResult != ''"> and repairResult = #{repairResult}</if>
+        </where>
+    </select>
+    
+    <select id="selectMaintenancerecordsByRecordID" parameterType="Long" resultMap="MaintenancerecordsResult">
+        <include refid="selectMaintenancerecordsVo"/>
+        where recordID = #{recordID}
+    </select>
+        
+    <insert id="insertMaintenancerecords" parameterType="Maintenancerecords" useGeneratedKeys="true" keyProperty="recordID">
+        insert into maintenancerecords
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="requestID != null">requestID,</if>
+            <if test="repairerName != null and repairerName != ''">repairerName,</if>
+            <if test="repairTime != null">repairTime,</if>
+            <if test="repairResult != null">repairResult,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="requestID != null">#{requestID},</if>
+            <if test="repairerName != null and repairerName != ''">#{repairerName},</if>
+            <if test="repairTime != null">#{repairTime},</if>
+            <if test="repairResult != null">#{repairResult},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMaintenancerecords" parameterType="Maintenancerecords">
+        update maintenancerecords
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="requestID != null">requestID = #{requestID},</if>
+            <if test="repairerName != null and repairerName != ''">repairerName = #{repairerName},</if>
+            <if test="repairTime != null">repairTime = #{repairTime},</if>
+            <if test="repairResult != null">repairResult = #{repairResult},</if>
+        </trim>
+        where recordID = #{recordID}
+    </update>
+
+    <delete id="deleteMaintenancerecordsByRecordID" parameterType="Long">
+        delete from maintenancerecords where recordID = #{recordID}
+    </delete>
+
+    <delete id="deleteMaintenancerecordsByRecordIDs" parameterType="String">
+        delete from maintenancerecords where recordID in 
+        <foreach item="recordID" collection="array" open="(" separator="," close=")">
+            #{recordID}
+        </foreach>
+    </delete>
+</mapper>

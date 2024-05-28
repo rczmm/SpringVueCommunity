@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.RegistrationsMapper">
+    
+    <resultMap type="Registrations" id="RegistrationsResult">
+        <result property="registrationID"    column="registrationID"    />
+        <result property="eventID"    column="eventID"    />
+        <result property="participantName"    column="participantName"    />
+        <result property="participantContact"    column="participantContact"    />
+        <result property="participantCount"    column="participantCount"    />
+        <result property="registeredAt"    column="registeredAt"    />
+    </resultMap>
+
+    <sql id="selectRegistrationsVo">
+        select registrationID, eventID, participantName, participantContact, participantCount, registeredAt from registrations
+    </sql>
+
+    <select id="selectRegistrationsList" parameterType="Registrations" resultMap="RegistrationsResult">
+        <include refid="selectRegistrationsVo"/>
+        <where>  
+            <if test="eventID != null "> and eventID = #{eventID}</if>
+            <if test="participantName != null  and participantName != ''"> and participantName like concat('%', #{participantName}, '%')</if>
+            <if test="participantContact != null  and participantContact != ''"> and participantContact = #{participantContact}</if>
+            <if test="participantCount != null "> and participantCount = #{participantCount}</if>
+            <if test="registeredAt != null "> and registeredAt = #{registeredAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectRegistrationsByRegistrationID" parameterType="Long" resultMap="RegistrationsResult">
+        <include refid="selectRegistrationsVo"/>
+        where registrationID = #{registrationID}
+    </select>
+        
+    <insert id="insertRegistrations" parameterType="Registrations" useGeneratedKeys="true" keyProperty="registrationID">
+        insert into registrations
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventID != null">eventID,</if>
+            <if test="participantName != null and participantName != ''">participantName,</if>
+            <if test="participantContact != null and participantContact != ''">participantContact,</if>
+            <if test="participantCount != null">participantCount,</if>
+            <if test="registeredAt != null">registeredAt,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eventID != null">#{eventID},</if>
+            <if test="participantName != null and participantName != ''">#{participantName},</if>
+            <if test="participantContact != null and participantContact != ''">#{participantContact},</if>
+            <if test="participantCount != null">#{participantCount},</if>
+            <if test="registeredAt != null">#{registeredAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRegistrations" parameterType="Registrations">
+        update registrations
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventID != null">eventID = #{eventID},</if>
+            <if test="participantName != null and participantName != ''">participantName = #{participantName},</if>
+            <if test="participantContact != null and participantContact != ''">participantContact = #{participantContact},</if>
+            <if test="participantCount != null">participantCount = #{participantCount},</if>
+            <if test="registeredAt != null">registeredAt = #{registeredAt},</if>
+        </trim>
+        where registrationID = #{registrationID}
+    </update>
+
+    <delete id="deleteRegistrationsByRegistrationID" parameterType="Long">
+        delete from registrations where registrationID = #{registrationID}
+    </delete>
+
+    <delete id="deleteRegistrationsByRegistrationIDs" parameterType="String">
+        delete from registrations where registrationID in 
+        <foreach item="registrationID" collection="array" open="(" separator="," close=")">
+            #{registrationID}
+        </foreach>
+    </delete>
+</mapper>

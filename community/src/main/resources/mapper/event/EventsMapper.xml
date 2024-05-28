@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.EventsMapper">
+    
+    <resultMap type="Events" id="EventsResult">
+        <result property="eventID"    column="eventID"    />
+        <result property="name"    column="name"    />
+        <result property="dateTime"    column="dateTime"    />
+        <result property="location"    column="location"    />
+        <result property="description"    column="description"    />
+        <result property="status"    column="status"    />
+        <result property="createdAt"    column="createdAt"    />
+        <result property="updatedAt"    column="updatedAt"    />
+    </resultMap>
+
+    <sql id="selectEventsVo">
+        select eventID, name, dateTime, location, description, status, createdAt, updatedAt from events
+    </sql>
+
+    <select id="selectEventsList" parameterType="Events" resultMap="EventsResult">
+        select eventID, name, dateTime, location, substring(description,1,20), status, createdAt, updatedAt from events
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="dateTime != null "> and dateTime = #{dateTime}</if>
+            <if test="location != null  and location != ''"> and location = #{location}</if>
+            <if test="description != null  and description != ''"> description = #{description}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="createdAt != null "> and createdAt = #{createdAt}</if>
+            <if test="updatedAt != null "> and updatedAt = #{updatedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectEventsByEventID" parameterType="Long" resultMap="EventsResult">
+        <include refid="selectEventsVo"/>
+        where eventID = #{eventID}
+    </select>
+        
+    <insert id="insertEvents" parameterType="Events" useGeneratedKeys="true" keyProperty="eventID">
+        insert into events
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="dateTime != null">dateTime,</if>
+            <if test="location != null">location,</if>
+            <if test="description != null">description,</if>
+            <if test="status != null">status,</if>
+            <if test="createdAt != null">createdAt,</if>
+            <if test="updatedAt != null">updatedAt,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="dateTime != null">#{dateTime},</if>
+            <if test="location != null">#{location},</if>
+            <if test="description != null">#{description},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEvents" parameterType="Events">
+        update events
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="dateTime != null">dateTime = #{dateTime},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createdAt != null">createdAt = #{createdAt},</if>
+            <if test="updatedAt != null">updatedAt = #{updatedAt},</if>
+        </trim>
+        where eventID = #{eventID}
+    </update>
+
+    <delete id="deleteEventsByEventID" parameterType="Long">
+        delete from events where eventID = #{eventID}
+    </delete>
+
+    <delete id="deleteEventsByEventIDs" parameterType="String">
+        delete from events where eventID in 
+        <foreach item="eventID" collection="array" open="(" separator="," close=")">
+            #{eventID}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.RelationshipsMapper">
+    
+    <resultMap type="Relationships" id="RelationshipsResult">
+        <result property="relationshipID"    column="relationshipID"    />
+        <result property="residentID"    column="residentID"    />
+        <result property="familyID"    column="familyID"    />
+        <result property="relationshipWithHead"    column="relationshipWithHead"    />
+    </resultMap>
+
+    <sql id="selectRelationshipsVo">
+        select relationshipID, residentID, familyID, relationshipWithHead from relationships
+    </sql>
+
+    <select id="selectRelationshipsList" parameterType="Relationships" resultMap="RelationshipsResult">
+        <include refid="selectRelationshipsVo"/>
+        <where>  
+            <if test="residentID != null "> and residentID = #{residentID}</if>
+            <if test="familyID != null "> and familyID = #{familyID}</if>
+            <if test="relationshipWithHead != null  and relationshipWithHead != ''"> and relationshipWithHead = #{relationshipWithHead}</if>
+        </where>
+    </select>
+    
+    <select id="selectRelationshipsByRelationshipID" parameterType="Long" resultMap="RelationshipsResult">
+        <include refid="selectRelationshipsVo"/>
+        where relationshipID = #{relationshipID}
+    </select>
+        
+    <insert id="insertRelationships" parameterType="Relationships" useGeneratedKeys="true" keyProperty="relationshipID">
+        insert into relationships
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="residentID != null">residentID,</if>
+            <if test="familyID != null">familyID,</if>
+            <if test="relationshipWithHead != null and relationshipWithHead != ''">relationshipWithHead,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="residentID != null">#{residentID},</if>
+            <if test="familyID != null">#{familyID},</if>
+            <if test="relationshipWithHead != null and relationshipWithHead != ''">#{relationshipWithHead},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRelationships" parameterType="Relationships">
+        update relationships
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="residentID != null">residentID = #{residentID},</if>
+            <if test="familyID != null">familyID = #{familyID},</if>
+            <if test="relationshipWithHead != null and relationshipWithHead != ''">relationshipWithHead = #{relationshipWithHead},</if>
+        </trim>
+        where relationshipID = #{relationshipID}
+    </update>
+
+    <delete id="deleteRelationshipsByRelationshipID" parameterType="Long">
+        delete from relationships where relationshipID = #{relationshipID}
+    </delete>
+
+    <delete id="deleteRelationshipsByRelationshipIDs" parameterType="String">
+        delete from relationships where relationshipID in 
+        <foreach item="relationshipID" collection="array" open="(" separator="," close=")">
+            #{relationshipID}
+        </foreach>
+    </delete>
+</mapper>

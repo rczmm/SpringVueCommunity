@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ReservationsMapper">
+    
+    <resultMap type="Reservations" id="ReservationsResult">
+        <result property="reservationID"    column="reservationID"    />
+        <result property="eventID"    column="eventID"    />
+        <result property="reserverName"    column="reserverName"    />
+        <result property="reserverContact"    column="reserverContact"    />
+        <result property="startTime"    column="startTime"    />
+        <result property="endTime"    column="endTime"    />
+        <result property="status"    column="status"    />
+        <result property="createdAt"    column="createdAt"    />
+        <result property="updatedAt"    column="updatedAt"    />
+    </resultMap>
+
+    <sql id="selectReservationsVo">
+        select reservationID, eventID, reserverName, reserverContact, startTime, endTime, status, createdAt, updatedAt from reservations
+    </sql>
+
+    <select id="selectReservationsList" parameterType="Reservations" resultMap="ReservationsResult">
+        <include refid="selectReservationsVo"/>
+        <where>  
+            <if test="eventID != null "> and eventID = #{eventID}</if>
+            <if test="reserverName != null  and reserverName != ''"> and reserverName like concat('%', #{reserverName}, '%')</if>
+            <if test="reserverContact != null  and reserverContact != ''"> and reserverContact = #{reserverContact}</if>
+            <if test="startTime != null "> and startTime = #{startTime}</if>
+            <if test="endTime != null "> and endTime = #{endTime}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="createdAt != null "> and createdAt = #{createdAt}</if>
+            <if test="updatedAt != null "> and updatedAt = #{updatedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectReservationsByReservationID" parameterType="Long" resultMap="ReservationsResult">
+        <include refid="selectReservationsVo"/>
+        where reservationID = #{reservationID}
+    </select>
+        
+    <insert id="insertReservations" parameterType="Reservations" useGeneratedKeys="true" keyProperty="reservationID">
+        insert into reservations
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventID != null">eventID,</if>
+            <if test="reserverName != null and reserverName != ''">reserverName,</if>
+            <if test="reserverContact != null and reserverContact != ''">reserverContact,</if>
+            <if test="startTime != null">startTime,</if>
+            <if test="endTime != null">endTime,</if>
+            <if test="status != null">status,</if>
+            <if test="createdAt != null">createdAt,</if>
+            <if test="updatedAt != null">updatedAt,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eventID != null">#{eventID},</if>
+            <if test="reserverName != null and reserverName != ''">#{reserverName},</if>
+            <if test="reserverContact != null and reserverContact != ''">#{reserverContact},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateReservations" parameterType="Reservations">
+        update reservations
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventID != null">eventID = #{eventID},</if>
+            <if test="reserverName != null and reserverName != ''">reserverName = #{reserverName},</if>
+            <if test="reserverContact != null and reserverContact != ''">reserverContact = #{reserverContact},</if>
+            <if test="startTime != null">startTime = #{startTime},</if>
+            <if test="endTime != null">endTime = #{endTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createdAt != null">createdAt = #{createdAt},</if>
+            <if test="updatedAt != null">updatedAt = #{updatedAt},</if>
+        </trim>
+        where reservationID = #{reservationID}
+    </update>
+
+    <delete id="deleteReservationsByReservationID" parameterType="Long">
+        delete from reservations where reservationID = #{reservationID}
+    </delete>
+
+    <delete id="deleteReservationsByReservationIDs" parameterType="String">
+        delete from reservations where reservationID in 
+        <foreach item="reservationID" collection="array" open="(" separator="," close=")">
+            #{reservationID}
+        </foreach>
+    </delete>
+</mapper>

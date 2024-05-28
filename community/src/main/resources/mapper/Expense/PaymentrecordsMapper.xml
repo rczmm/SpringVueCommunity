@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PaymentrecordsMapper">
+    
+    <resultMap type="Paymentrecords" id="PaymentrecordsResult">
+        <result property="recordID"    column="recordID"    />
+        <result property="expenseID"    column="expenseID"    />
+        <result property="payerName"    column="payerName"    />
+        <result property="paymentTime"    column="paymentTime"    />
+        <result property="paymentAmount"    column="paymentAmount"    />
+    </resultMap>
+
+    <sql id="selectPaymentrecordsVo">
+        select recordID, expenseID, payerName, paymentTime, paymentAmount from paymentrecords
+    </sql>
+
+    <select id="selectPaymentrecordsList" parameterType="Paymentrecords" resultMap="PaymentrecordsResult">
+        <include refid="selectPaymentrecordsVo"/>
+        <where>  
+            <if test="expenseID != null "> and expenseID = #{expenseID}</if>
+            <if test="payerName != null  and payerName != ''"> and payerName like concat('%', #{payerName}, '%')</if>
+            <if test="paymentTime != null "> and paymentTime = #{paymentTime}</if>
+            <if test="paymentAmount != null "> and paymentAmount = #{paymentAmount}</if>
+        </where>
+    </select>
+    
+    <select id="selectPaymentrecordsByRecordID" parameterType="Long" resultMap="PaymentrecordsResult">
+        <include refid="selectPaymentrecordsVo"/>
+        where recordID = #{recordID}
+    </select>
+        
+    <insert id="insertPaymentrecords" parameterType="Paymentrecords" useGeneratedKeys="true" keyProperty="recordID">
+        insert into paymentrecords
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="expenseID != null">expenseID,</if>
+            <if test="payerName != null and payerName != ''">payerName,</if>
+            <if test="paymentTime != null">paymentTime,</if>
+            <if test="paymentAmount != null">paymentAmount,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="expenseID != null">#{expenseID},</if>
+            <if test="payerName != null and payerName != ''">#{payerName},</if>
+            <if test="paymentTime != null">#{paymentTime},</if>
+            <if test="paymentAmount != null">#{paymentAmount},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePaymentrecords" parameterType="Paymentrecords">
+        update paymentrecords
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="expenseID != null">expenseID = #{expenseID},</if>
+            <if test="payerName != null and payerName != ''">payerName = #{payerName},</if>
+            <if test="paymentTime != null">paymentTime = #{paymentTime},</if>
+            <if test="paymentAmount != null">paymentAmount = #{paymentAmount},</if>
+        </trim>
+        where recordID = #{recordID}
+    </update>
+
+    <delete id="deletePaymentrecordsByRecordID" parameterType="Long">
+        delete from paymentrecords where recordID = #{recordID}
+    </delete>
+
+    <delete id="deletePaymentrecordsByRecordIDs" parameterType="String">
+        delete from paymentrecords where recordID in 
+        <foreach item="recordID" collection="array" open="(" separator="," close=")">
+            #{recordID}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.EnvironmentalrecordsMapper">
+    
+    <resultMap type="Environmentalrecords" id="EnvironmentalrecordsResult">
+        <result property="recordID"    column="recordID"    />
+        <result property="recordTime"    column="recordTime"    />
+        <result property="environmentalStatus"    column="environmentalStatus"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectEnvironmentalrecordsVo">
+        select recordID, recordTime, environmentalStatus, remarks from environmentalrecords
+    </sql>
+
+    <select id="selectEnvironmentalrecordsList" parameterType="Environmentalrecords" resultMap="EnvironmentalrecordsResult">
+        <include refid="selectEnvironmentalrecordsVo"/>
+        <where>  
+            <if test="recordTime != null "> and recordTime = #{recordTime}</if>
+            <if test="environmentalStatus != null  and environmentalStatus != ''"> and environmentalStatus = #{environmentalStatus}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+        </where>
+    </select>
+    
+    <select id="selectEnvironmentalrecordsByRecordID" parameterType="Long" resultMap="EnvironmentalrecordsResult">
+        <include refid="selectEnvironmentalrecordsVo"/>
+        where recordID = #{recordID}
+    </select>
+        
+    <insert id="insertEnvironmentalrecords" parameterType="Environmentalrecords" useGeneratedKeys="true" keyProperty="recordID">
+        insert into environmentalrecords
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordTime != null">recordTime,</if>
+            <if test="environmentalStatus != null">environmentalStatus,</if>
+            <if test="remarks != null">remarks,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordTime != null">#{recordTime},</if>
+            <if test="environmentalStatus != null">#{environmentalStatus},</if>
+            <if test="remarks != null">#{remarks},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEnvironmentalrecords" parameterType="Environmentalrecords">
+        update environmentalrecords
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordTime != null">recordTime = #{recordTime},</if>
+            <if test="environmentalStatus != null">environmentalStatus = #{environmentalStatus},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where recordID = #{recordID}
+    </update>
+
+    <delete id="deleteEnvironmentalrecordsByRecordID" parameterType="Long">
+        delete from environmentalrecords where recordID = #{recordID}
+    </delete>
+
+    <delete id="deleteEnvironmentalrecordsByRecordIDs" parameterType="String">
+        delete from environmentalrecords where recordID in 
+        <foreach item="recordID" collection="array" open="(" separator="," close=")">
+            #{recordID}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HandlingrecordsMapper">
+    
+    <resultMap type="Handlingrecords" id="HandlingrecordsResult">
+        <result property="recordID"    column="recordID"    />
+        <result property="complaintID"    column="complaintID"    />
+        <result property="handlerName"    column="handlerName"    />
+        <result property="handleTime"    column="handleTime"    />
+        <result property="handleResult"    column="handleResult"    />
+    </resultMap>
+
+    <sql id="selectHandlingrecordsVo">
+        select recordID, complaintID, handlerName, handleTime, handleResult from handlingrecords
+    </sql>
+
+    <select id="selectHandlingrecordsList" parameterType="Handlingrecords" resultMap="HandlingrecordsResult">
+        <include refid="selectHandlingrecordsVo"/>
+        <where>  
+            <if test="complaintID != null "> and complaintID = #{complaintID}</if>
+            <if test="handlerName != null  and handlerName != ''"> and handlerName like concat('%', #{handlerName}, '%')</if>
+            <if test="handleTime != null "> and handleTime = #{handleTime}</if>
+            <if test="handleResult != null  and handleResult != ''"> and handleResult = #{handleResult}</if>
+        </where>
+    </select>
+    
+    <select id="selectHandlingrecordsByRecordID" parameterType="Long" resultMap="HandlingrecordsResult">
+        <include refid="selectHandlingrecordsVo"/>
+        where recordID = #{recordID}
+    </select>
+        
+    <insert id="insertHandlingrecords" parameterType="Handlingrecords" useGeneratedKeys="true" keyProperty="recordID">
+        insert into handlingrecords
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="complaintID != null">complaintID,</if>
+            <if test="handlerName != null and handlerName != ''">handlerName,</if>
+            <if test="handleTime != null">handleTime,</if>
+            <if test="handleResult != null">handleResult,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="complaintID != null">#{complaintID},</if>
+            <if test="handlerName != null and handlerName != ''">#{handlerName},</if>
+            <if test="handleTime != null">#{handleTime},</if>
+            <if test="handleResult != null">#{handleResult},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHandlingrecords" parameterType="Handlingrecords">
+        update handlingrecords
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="complaintID != null">complaintID = #{complaintID},</if>
+            <if test="handlerName != null and handlerName != ''">handlerName = #{handlerName},</if>
+            <if test="handleTime != null">handleTime = #{handleTime},</if>
+            <if test="handleResult != null">handleResult = #{handleResult},</if>
+        </trim>
+        where recordID = #{recordID}
+    </update>
+
+    <delete id="deleteHandlingrecordsByRecordID" parameterType="Long">
+        delete from handlingrecords where recordID = #{recordID}
+    </delete>
+
+    <delete id="deleteHandlingrecordsByRecordIDs" parameterType="String">
+        delete from handlingrecords where recordID in 
+        <foreach item="recordID" collection="array" open="(" separator="," close=")">
+            #{recordID}
+        </foreach>
+    </delete>
+</mapper>
