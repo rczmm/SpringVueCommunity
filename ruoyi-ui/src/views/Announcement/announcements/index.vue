@@ -71,9 +71,8 @@
 
     <el-table v-loading="loading" :data="announcementsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="公告ID" align="center" prop="announcementID" />
       <el-table-column label="公告标题" align="center" prop="title" />
-      <el-table-column label="公告内容" align="center" prop="content" />
+      <el-table-column label="公告内容" align="center" prop="content" show-overflow-tooltip/>
       <el-table-column label="发布时间" align="center" prop="publishedAt" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.publishedAt, '{y}-{m}-{d}') }}</span>
@@ -98,7 +97,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"

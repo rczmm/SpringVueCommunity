@@ -1,7 +1,8 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">社区人口后台管理系统</h3>
+      <h3 class="title"><el-link href="/index-home.html">社区人口管理系统</el-link></h3>
+
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
