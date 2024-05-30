@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询人口信息列表
+// 查询居民信息列表
 export function listResidents(query) {
   return request({
     url: '/person/residents/list',
@@ -9,7 +9,7 @@ export function listResidents(query) {
   })
 }
 
-// 查询人口信息详细
+// 查询居民信息详细
 export function getResidents(residentID) {
   return request({
     url: '/person/residents/' + residentID,
@@ -17,7 +17,7 @@ export function getResidents(residentID) {
   })
 }
 
-// 新增人口信息
+// 新增居民信息
 export function addResidents(data) {
   return request({
     url: '/person/residents',
@@ -26,7 +26,7 @@ export function addResidents(data) {
   })
 }
 
-// 修改人口信息
+// 修改居民信息
 export function updateResidents(data) {
   return request({
     url: '/person/residents',
@@ -35,7 +35,7 @@ export function updateResidents(data) {
   })
 }
 
-// 删除人口信息
+// 删除居民信息
 export function delResidents(residentID) {
   return request({
     url: '/person/residents/' + residentID,

@@ -1,6 +1,7 @@
 package com.ruoyi.system.controller;
 
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,8 @@ public class RelationshipsController extends BaseController
     @GetMapping("/list")
     public AjaxResult list(Relationships relationships)
     {
-        List<Relationships> list = relationshipsService.selectRelationshipsList(relationships);
-        return success(list);
+        Map<Long,List<Relationships>> ships = relationshipsService.selectRelationshipsList(relationships);
+        return success(ships);
     }
 
     /**
@@ -52,9 +53,9 @@ public class RelationshipsController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, Relationships relationships)
     {
-        List<Relationships> list = relationshipsService.selectRelationshipsList(relationships);
+        Map<Long,List<Relationships>> list = relationshipsService.selectRelationshipsList(relationships);
         ExcelUtil<Relationships> util = new ExcelUtil<Relationships>(Relationships.class);
-        util.exportExcel(response, list, "关系信息数据");
+//        util.exportExcel(response, , "关系信息数据");
     }
 
     /**

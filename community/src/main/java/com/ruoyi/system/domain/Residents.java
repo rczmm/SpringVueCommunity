@@ -8,10 +8,10 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 人口信息对象 residents
+ * 居民信息对象 residents
  * 
- * @author rczmm
- * @date 2024-04-14
+ * @author rcz
+ * @date 2024-05-29
  */
 public class Residents extends BaseEntity
 {
@@ -58,6 +58,50 @@ public class Residents extends BaseEntity
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updatedAt;
+
+    /** 民族 */
+    @Excel(name = "民族")
+    private String nation;
+
+    /** 电子邮箱 */
+    @Excel(name = "电子邮箱")
+    private String email;
+
+    /** 工作单位 */
+    @Excel(name = "工作单位")
+    private String workUnit;
+
+    /** 职业 */
+    @Excel(name = "职业")
+    private String profession;
+
+    /** 教育背景 */
+    @Excel(name = "教育背景")
+    private String educationLevel;
+
+    /** 备注 */
+    @Excel(name = "备注")
+    private String note;
+
+    /** 紧急联系人 */
+    @Excel(name = "紧急联系人")
+    private String emergencyContact;
+
+    /** 宗教信仰 */
+    @Excel(name = "宗教信仰")
+    private String religiousBelief;
+
+    /** 健康状况 */
+    @Excel(name = "健康状况")
+    private String healthCondition;
+
+    /** 子女信息 */
+    @Excel(name = "子女信息")
+    private String childrenInformation;
+
+    /** 婚姻状况 */
+    @Excel(name = "婚姻状况")
+    private String maritalStatus;
 
     public void setResidentID(Long residentID) 
     {
@@ -149,6 +193,105 @@ public class Residents extends BaseEntity
     {
         return updatedAt;
     }
+    public void setNation(String nation) 
+    {
+        this.nation = nation;
+    }
+
+    public String getNation() 
+    {
+        return nation;
+    }
+    public void setEmail(String email) 
+    {
+        this.email = email;
+    }
+
+    public String getEmail() 
+    {
+        return email;
+    }
+    public void setWorkUnit(String workUnit) 
+    {
+        this.workUnit = workUnit;
+    }
+
+    public String getWorkUnit() 
+    {
+        return workUnit;
+    }
+    public void setProfession(String profession) 
+    {
+        this.profession = profession;
+    }
+
+    public String getProfession() 
+    {
+        return profession;
+    }
+    public void setEducationLevel(String educationLevel) 
+    {
+        this.educationLevel = educationLevel;
+    }
+
+    public String getEducationLevel() 
+    {
+        return educationLevel;
+    }
+    public void setNote(String note) 
+    {
+        this.note = note;
+    }
+
+    public String getNote() 
+    {
+        return note;
+    }
+    public void setEmergencyContact(String emergencyContact) 
+    {
+        this.emergencyContact = emergencyContact;
+    }
+
+    public String getEmergencyContact() 
+    {
+        return emergencyContact;
+    }
+    public void setReligiousBelief(String religiousBelief) 
+    {
+        this.religiousBelief = religiousBelief;
+    }
+
+    public String getReligiousBelief() 
+    {
+        return religiousBelief;
+    }
+    public void setHealthCondition(String healthCondition) 
+    {
+        this.healthCondition = healthCondition;
+    }
+
+    public String getHealthCondition() 
+    {
+        return healthCondition;
+    }
+    public void setChildrenInformation(String childrenInformation) 
+    {
+        this.childrenInformation = childrenInformation;
+    }
+
+    public String getChildrenInformation() 
+    {
+        return childrenInformation;
+    }
+    public void setMaritalStatus(String maritalStatus) 
+    {
+        this.maritalStatus = maritalStatus;
+    }
+
+    public String getMaritalStatus() 
+    {
+        return maritalStatus;
+    }
 
     @Override
     public String toString() {
@@ -163,6 +306,17 @@ public class Residents extends BaseEntity
             .append("residentialAddress", getResidentialAddress())
             .append("createdAt", getCreatedAt())
             .append("updatedAt", getUpdatedAt())
+            .append("nation", getNation())
+            .append("email", getEmail())
+            .append("workUnit", getWorkUnit())
+            .append("profession", getProfession())
+            .append("educationLevel", getEducationLevel())
+            .append("note", getNote())
+            .append("emergencyContact", getEmergencyContact())
+            .append("religiousBelief", getReligiousBelief())
+            .append("healthCondition", getHealthCondition())
+            .append("childrenInformation", getChildrenInformation())
+            .append("maritalStatus", getMaritalStatus())
             .toString();
     }
 }

@@ -15,10 +15,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="residentialAddress"    column="residentialAddress"    />
         <result property="createdAt"    column="createdAt"    />
         <result property="updatedAt"    column="updatedAt"    />
+        <result property="nation"    column="nation"    />
+        <result property="email"    column="email"    />
+        <result property="workUnit"    column="work_unit"    />
+        <result property="profession"    column="profession"    />
+        <result property="educationLevel"    column="education_level"    />
+        <result property="note"    column="note"    />
+        <result property="emergencyContact"    column="emergency_contact"    />
+        <result property="religiousBelief"    column="religious_belief"    />
+        <result property="healthCondition"    column="health_condition"    />
+        <result property="childrenInformation"    column="children_information"    />
+        <result property="maritalStatus"    column="marital_status"    />
     </resultMap>
 
     <sql id="selectResidentsVo">
-        select residentID, name, gender, dateOfBirth, idnumber, contact, registeredAddress, residentialAddress, createdAt, updatedAt from residents
+        select residentID, name, gender, dateOfBirth, idnumber, contact, registeredAddress, residentialAddress, createdAt, updatedAt, nation, email, work_unit, profession, education_level, note, emergency_contact, religious_belief, health_condition, children_information, marital_status from residents
     </sql>
 
     <select id="selectResidentsList" parameterType="Residents" resultMap="ResidentsResult">
@@ -33,6 +44,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="residentialAddress != null  and residentialAddress != ''"> and residentialAddress = #{residentialAddress}</if>
             <if test="createdAt != null "> and createdAt = #{createdAt}</if>
             <if test="updatedAt != null "> and updatedAt = #{updatedAt}</if>
+            <if test="nation != null  and nation != ''"> and nation = #{nation}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="workUnit != null  and workUnit != ''"> and work_unit = #{workUnit}</if>
+            <if test="profession != null  and profession != ''"> and profession = #{profession}</if>
+            <if test="educationLevel != null  and educationLevel != ''"> and education_level = #{educationLevel}</if>
+            <if test="note != null  and note != ''"> and note = #{note}</if>
+            <if test="emergencyContact != null  and emergencyContact != ''"> and emergency_contact = #{emergencyContact}</if>
+            <if test="religiousBelief != null  and religiousBelief != ''"> and religious_belief = #{religiousBelief}</if>
+            <if test="healthCondition != null  and healthCondition != ''"> and health_condition = #{healthCondition}</if>
+            <if test="childrenInformation != null  and childrenInformation != ''"> and children_information = #{childrenInformation}</if>
+            <if test="maritalStatus != null  and maritalStatus != ''"> and marital_status = #{maritalStatus}</if>
         </where>
     </select>
     
@@ -53,6 +75,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="residentialAddress != null and residentialAddress != ''">residentialAddress,</if>
             <if test="createdAt != null">createdAt,</if>
             <if test="updatedAt != null">updatedAt,</if>
+            <if test="nation != null and nation != ''">nation,</if>
+            <if test="email != null">email,</if>
+            <if test="workUnit != null">work_unit,</if>
+            <if test="profession != null">profession,</if>
+            <if test="educationLevel != null">education_level,</if>
+            <if test="note != null">note,</if>
+            <if test="emergencyContact != null">emergency_contact,</if>
+            <if test="religiousBelief != null">religious_belief,</if>
+            <if test="healthCondition != null">health_condition,</if>
+            <if test="childrenInformation != null">children_information,</if>
+            <if test="maritalStatus != null">marital_status,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">#{name},</if>
@@ -64,6 +97,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="residentialAddress != null and residentialAddress != ''">#{residentialAddress},</if>
             <if test="createdAt != null">#{createdAt},</if>
             <if test="updatedAt != null">#{updatedAt},</if>
+            <if test="nation != null and nation != ''">#{nation},</if>
+            <if test="email != null">#{email},</if>
+            <if test="workUnit != null">#{workUnit},</if>
+            <if test="profession != null">#{profession},</if>
+            <if test="educationLevel != null">#{educationLevel},</if>
+            <if test="note != null">#{note},</if>
+            <if test="emergencyContact != null">#{emergencyContact},</if>
+            <if test="religiousBelief != null">#{religiousBelief},</if>
+            <if test="healthCondition != null">#{healthCondition},</if>
+            <if test="childrenInformation != null">#{childrenInformation},</if>
+            <if test="maritalStatus != null">#{maritalStatus},</if>
          </trim>
     </insert>
 
@@ -79,6 +123,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="residentialAddress != null and residentialAddress != ''">residentialAddress = #{residentialAddress},</if>
             <if test="createdAt != null">createdAt = #{createdAt},</if>
             <if test="updatedAt != null">updatedAt = #{updatedAt},</if>
+            <if test="nation != null and nation != ''">nation = #{nation},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="workUnit != null">work_unit = #{workUnit},</if>
+            <if test="profession != null">profession = #{profession},</if>
+            <if test="educationLevel != null">education_level = #{educationLevel},</if>
+            <if test="note != null">note = #{note},</if>
+            <if test="emergencyContact != null">emergency_contact = #{emergencyContact},</if>
+            <if test="religiousBelief != null">religious_belief = #{religiousBelief},</if>
+            <if test="healthCondition != null">health_condition = #{healthCondition},</if>
+            <if test="childrenInformation != null">children_information = #{childrenInformation},</if>
+            <if test="maritalStatus != null">marital_status = #{maritalStatus},</if>
         </trim>
         where residentID = #{residentID}
     </update>

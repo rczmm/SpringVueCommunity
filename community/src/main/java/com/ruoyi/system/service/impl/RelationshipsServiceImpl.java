@@ -1,6 +1,9 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.RelationshipsMapper;
@@ -38,9 +41,11 @@ public class RelationshipsServiceImpl implements IRelationshipsService
      * @return 关系信息
      */
     @Override
-    public List<Relationships> selectRelationshipsList(Relationships relationships)
+    public Map<Long,List<Relationships>> selectRelationshipsList(Relationships relationships)
     {
-        return relationshipsMapper.selectRelationshipsList(relationships);
+        List<Relationships> list = relationshipsMapper.selectRelationshipsList(relationships);
+        return list.stream()
+                .collect(Collectors.groupingBy(Relationships::getFamilyID));
     }
 
     /**

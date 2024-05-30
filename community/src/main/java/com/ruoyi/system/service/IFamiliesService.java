@@ -17,7 +17,7 @@ public interface IFamiliesService
      * @param familyID 家庭信息主键
      * @return 家庭信息
      */
-    public Families selectFamiliesByFamilyID(Long familyID);
+    Families selectFamiliesByFamilyID(Long familyID);
 
     /**
      * 查询家庭信息列表
@@ -25,7 +25,7 @@ public interface IFamiliesService
      * @param families 家庭信息
      * @return 家庭信息集合
      */
-    public List<Families> selectFamiliesList(Families families);
+    List<Families> selectFamiliesList(Families families);
 
     /**
      * 新增家庭信息

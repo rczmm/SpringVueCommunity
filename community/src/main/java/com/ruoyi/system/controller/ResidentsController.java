@@ -22,10 +22,10 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
- * 人口信息Controller
+ * 居民信息Controller
  * 
- * @author rczmm
- * @date 2024-04-14
+ * @author rcz
+ * @date 2024-05-29
  */
 @RestController
 @RequestMapping("/person/residents")
@@ -35,7 +35,7 @@ public class ResidentsController extends BaseController
     private IResidentsService residentsService;
 
     /**
-     * 查询人口信息列表
+     * 查询居民信息列表
      */
     @PreAuthorize("@ss.hasPermi('person:residents:list')")
     @GetMapping("/list")
@@ -47,20 +47,20 @@ public class ResidentsController extends BaseController
     }
 
     /**
-     * 导出人口信息列表
+     * 导出居民信息列表
      */
     @PreAuthorize("@ss.hasPermi('person:residents:export')")
-    @Log(title = "人口信息", businessType = BusinessType.EXPORT)
+    @Log(title = "居民信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, Residents residents)
     {
         List<Residents> list = residentsService.selectResidentsList(residents);
         ExcelUtil<Residents> util = new ExcelUtil<Residents>(Residents.class);
-        util.exportExcel(response, list, "人口信息数据");
+        util.exportExcel(response, list, "居民信息数据");
     }
 
     /**
-     * 获取人口信息详细信息
+     * 获取居民信息详细信息
      */
     @PreAuthorize("@ss.hasPermi('person:residents:query')")
     @GetMapping(value = "/{residentID}")
@@ -70,10 +70,10 @@ public class ResidentsController extends BaseController
     }
 
     /**
-     * 新增人口信息
+     * 新增居民信息
      */
     @PreAuthorize("@ss.hasPermi('person:residents:add')")
-    @Log(title = "人口信息", businessType = BusinessType.INSERT)
+    @Log(title = "居民信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Residents residents)
     {
@@ -81,10 +81,10 @@ public class ResidentsController extends BaseController
     }
 
     /**
-     * 修改人口信息
+     * 修改居民信息
      */
     @PreAuthorize("@ss.hasPermi('person:residents:edit')")
-    @Log(title = "人口信息", businessType = BusinessType.UPDATE)
+    @Log(title = "居民信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Residents residents)
     {
@@ -92,10 +92,10 @@ public class ResidentsController extends BaseController
     }
 
     /**
-     * 删除人口信息
+     * 删除居民信息
      */
     @PreAuthorize("@ss.hasPermi('person:residents:remove')")
-    @Log(title = "人口信息", businessType = BusinessType.DELETE)
+    @Log(title = "居民信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{residentIDs}")
     public AjaxResult remove(@PathVariable Long[] residentIDs)
     {

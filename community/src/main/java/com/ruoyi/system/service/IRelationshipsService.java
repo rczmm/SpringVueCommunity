@@ -1,6 +1,8 @@
 package com.ruoyi.system.service;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.system.domain.Relationships;
 
 /**
@@ -25,7 +27,7 @@ public interface IRelationshipsService
      * @param relationships 关系信息
      * @return 关系信息集合
      */
-    public List<Relationships> selectRelationshipsList(Relationships relationships);
+    public Map<Long,List<Relationships>> selectRelationshipsList(Relationships relationships);
 
     /**
      * 新增关系信息
