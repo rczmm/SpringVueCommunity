@@ -3,10 +3,34 @@
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="记录时间" prop="recordTime">
         <el-date-picker clearable
-          v-model="queryParams.recordTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择记录时间">
+                        v-model="queryParams.recordTime"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择记录时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="地点" prop="location">
+        <el-input
+          v-model="queryParams.location"
+          placeholder="请输入地点"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="记录人" prop="recordPerson">
+        <el-input
+          v-model="queryParams.recordPerson"
+          placeholder="请输入记录人"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="日期" prop="date">
+        <el-date-picker clearable
+                        v-model="queryParams.date"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择日期">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -18,16 +42,6 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['Environmental:environmentalrecords:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="success"
           plain
           icon="el-icon-edit"
@@ -35,7 +49,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['Environmental:environmentalrecords:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -46,7 +61,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['Environmental:environmentalrecords:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -56,21 +72,29 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['Environmental:environmentalrecords:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="environmentalrecordsList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="记录ID" align="center" prop="recordID" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="编号" align="center" prop="recordID"/>
       <el-table-column label="记录时间" align="center" prop="recordTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.recordTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.recordTime, '{y}-{m}-{d} {h}:{m}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="环境卫生情况" align="center" prop="environmentalStatus" />
-      <el-table-column label="备注" align="center" prop="remarks" />
+      <el-table-column label="情况" align="center" prop="environmentalStatus"/>
+      <el-table-column label="备注" align="center" prop="remarks"/>
+      <el-table-column label="地点" align="center" prop="location"/>
+      <el-table-column label="记录人" align="center" prop="recordPerson"/>
+      <el-table-column label="日期" align="center" prop="date" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.date, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -79,18 +103,20 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['Environmental:environmentalrecords:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['Environmental:environmentalrecords:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -102,16 +128,11 @@
     <!-- 添加或修改环境卫生对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="记录时间" prop="recordTime">
-          <el-date-picker clearable
-            v-model="form.recordTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择记录时间">
-          </el-date-picker>
-        </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.remarks" type="textarea" placeholder="请输入内容"/>
+        </el-form-item>
+        <el-form-item label="地点" prop="location">
+          <el-input v-model="form.location" placeholder="请输入地点"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -123,7 +144,15 @@
 </template>
 
 <script>
-import { listEnvironmentalrecords, getEnvironmentalrecords, delEnvironmentalrecords, addEnvironmentalrecords, updateEnvironmentalrecords } from "@/api/Environmental/environmentalrecords";
+import {
+  addEnvironmentalrecords,
+  delEnvironmentalrecords,
+  getEnvironmentalrecords,
+  listEnvironmentalrecords,
+  updateEnvironmentalrecords
+} from "@/api/Environmental/environmentalrecords";
+import {formatDate} from "@/utils";
+import {getInfo} from "@/api/login";
 
 export default {
   name: "Environmentalrecords",
@@ -153,12 +182,23 @@ export default {
         pageSize: 10,
         recordTime: null,
         environmentalStatus: null,
-        remarks: null
+        remarks: null,
+        location: null,
+        recordPerson: null,
+        date: null
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
+      rules: {},
+      // 日期选择器配置
+      pickerOptions: {
+        shortcuts: [{
+          text: '现在',
+          onClick(picker) {
+            picker.$emit('pick', new Date());
+          }
+        }]
       }
     };
   },
@@ -171,6 +211,7 @@ export default {
       this.loading = true;
       listEnvironmentalrecords(this.queryParams).then(response => {
         this.environmentalrecordsList = response.rows;
+        console.log(this.environmentalrecordsList)
         this.total = response.total;
         this.loading = false;
       });
@@ -186,7 +227,10 @@ export default {
         recordID: null,
         recordTime: null,
         environmentalStatus: null,
-        remarks: null
+        remarks: null,
+        location: null,
+        recordPerson: null,
+        date: null
       };
       this.resetForm("form");
     },
@@ -203,7 +247,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.recordID)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -221,9 +265,19 @@ export default {
         this.open = true;
         this.title = "修改环境卫生";
       });
+      this.form.recordPerson = getInfo().then(
+        (response) => {
+          this.form.recordPerson = response.user.nickName;
+        }
+      );
     },
     /** 提交按钮 */
     submitForm() {
+      console.log(this.form)
+      this.form.recordTime = formatDate(new Date());
+      if (this.form.recordPerson != null && this.form.remarks != null) {
+        this.form.environmentalStatus = "已检查";
+      }
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.recordID != null) {
@@ -245,18 +299,30 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const recordIDs = row.recordID || this.ids;
-      this.$modal.confirm('是否确认删除环境卫生编号为"' + recordIDs + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除环境卫生编号为"' + recordIDs + '"的数据项？').then(function () {
         return delEnvironmentalrecords(recordIDs);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
       this.download('Environmental/environmentalrecords/export', {
         ...this.queryParams
       }, `environmentalrecords_${new Date().getTime()}.xlsx`)
+    },
+    //
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 月份是从0开始的，所以需要+1
+      const day = date.getDate().toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const seconds = date.getSeconds().toString().padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
   }
 };

@@ -27,6 +27,7 @@ public interface HandlingrecordsMapper
      */
     public List<Handlingrecords> selectHandlingrecordsList(Handlingrecords handlingrecords);
 
+
     /**
      * 新增处理记录
      * 

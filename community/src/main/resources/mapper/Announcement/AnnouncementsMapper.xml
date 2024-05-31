@@ -1,46 +1,60 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.AnnouncementsMapper">
-    
+
     <resultMap type="Announcements" id="AnnouncementsResult">
-        <result property="announcementID"    column="announcementID"    />
-        <result property="title"    column="title"    />
-        <result property="content"    column="content"    />
-        <result property="publishedAt"    column="publishedAt"    />
+        <result property="announcementID" column="announcementID"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="publishedAt" column="publishedAt"/>
+        <result property="author" column="author"/>
+        <result property="authorId" column="authorId"/>
     </resultMap>
 
     <sql id="selectAnnouncementsVo">
-        select announcementID, title, content, publishedAt from announcements
+        select announcementID, title, content, publishedAt, author, authorId
+        from announcements
     </sql>
 
     <select id="selectAnnouncementsList" parameterType="Announcements" resultMap="AnnouncementsResult">
         <include refid="selectAnnouncementsVo"/>
-        <where>  
-            <if test="title != null  and title != ''"> and title = #{title}</if>
-            <if test="content != null  and content != ''"> and content = #{content}</if>
-            <if test="publishedAt != null "> and publishedAt = #{publishedAt}</if>
+        <where>
+            <if test="title != null  and title != ''">and title = #{title}</if>
+            <if test="content != null  and content != ''">and content = #{content}</if>
+            <if test="publishedAt != null ">and publishedAt = #{publishedAt}</if>
+            <if test="author != null  and author != ''">and author = #{author}</if>
+            <if test="authorId != null ">and authorId = #{authorId}</if>
         </where>
     </select>
-    
+
     <select id="selectAnnouncementsByAnnouncementID" parameterType="Long" resultMap="AnnouncementsResult">
         <include refid="selectAnnouncementsVo"/>
         where announcementID = #{announcementID}
     </select>
-        
+
+    <select id="selectAnnouncementsByAuthorId" parameterType="Long" resultMap="AnnouncementsResult">
+        <include refid="selectAnnouncementsVo"/>
+        WHERE authorId = #{authorId}
+    </select>
+
     <insert id="insertAnnouncements" parameterType="Announcements" useGeneratedKeys="true" keyProperty="announcementID">
         insert into announcements
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="title != null and title != ''">title,</if>
             <if test="content != null and content != ''">content,</if>
             <if test="publishedAt != null">publishedAt,</if>
-         </trim>
+            <if test="author != null">author,</if>
+            <if test="authorId != null">authorId,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="title != null and title != ''">#{title},</if>
             <if test="content != null and content != ''">#{content},</if>
             <if test="publishedAt != null">#{publishedAt},</if>
-         </trim>
+            <if test="author != null">#{author},</if>
+            <if test="authorId != null">#{authorId},</if>
+        </trim>
     </insert>
 
     <update id="updateAnnouncements" parameterType="Announcements">
@@ -49,16 +63,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="title != null and title != ''">title = #{title},</if>
             <if test="content != null and content != ''">content = #{content},</if>
             <if test="publishedAt != null">publishedAt = #{publishedAt},</if>
+            <if test="author != null">author = #{author},</if>
+            <if test="authorId != null">authorId = #{authorId},</if>
         </trim>
         where announcementID = #{announcementID}
     </update>
 
     <delete id="deleteAnnouncementsByAnnouncementID" parameterType="Long">
-        delete from announcements where announcementID = #{announcementID}
+        delete
+        from announcements
+        where announcementID = #{announcementID}
     </delete>
 
     <delete id="deleteAnnouncementsByAnnouncementIDs" parameterType="String">
-        delete from announcements where announcementID in 
+        delete from announcements where announcementID in
         <foreach item="announcementID" collection="array" open="(" separator="," close=")">
             #{announcementID}
         </foreach>

@@ -20,6 +20,14 @@ public interface IAnnouncementsService
     public Announcements selectAnnouncementsByAnnouncementID(Long announcementID);
 
     /**
+     * 查询公告管理
+     * @param authorId 作者id
+     * @return 公告管理
+     */
+    public List<Announcements> selectAnnouncementsByAuthorID(Long authorId);
+
+
+    /**
      * 查询公告管理列表
      * 
      * @param announcements 公告管理

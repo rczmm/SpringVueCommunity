@@ -17,6 +17,15 @@ export function getAnnouncements(announcementID) {
   })
 }
 
+// 查询公告管理详细
+export function getAnnouncementsByAuthorId(query) {
+  console.log(query)
+  return request({
+    url: '/Announcement/announcements/author/' + query,
+    method: 'get'
+  })
+}
+
 // 新增公告管理
 export function addAnnouncements(data) {
   return request({

@@ -1,46 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.EnvironmentalrecordsMapper">
-    
+
     <resultMap type="Environmentalrecords" id="EnvironmentalrecordsResult">
         <result property="recordID"    column="recordID"    />
         <result property="recordTime"    column="recordTime"    />
         <result property="environmentalStatus"    column="environmentalStatus"    />
         <result property="remarks"    column="remarks"    />
+        <result property="location"    column="location"    />
+        <result property="recordPerson"    column="record_person"    />
+        <result property="date"    column="date"    />
     </resultMap>
 
     <sql id="selectEnvironmentalrecordsVo">
-        select recordID, recordTime, environmentalStatus, remarks from environmentalrecords
+        select recordID, recordTime, environmentalStatus, remarks, location, record_person, date from environmentalrecords
     </sql>
 
     <select id="selectEnvironmentalrecordsList" parameterType="Environmentalrecords" resultMap="EnvironmentalrecordsResult">
         <include refid="selectEnvironmentalrecordsVo"/>
-        <where>  
+        <where>
             <if test="recordTime != null "> and recordTime = #{recordTime}</if>
             <if test="environmentalStatus != null  and environmentalStatus != ''"> and environmentalStatus = #{environmentalStatus}</if>
             <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="location != null  and location != ''"> and location = #{location}</if>
+            <if test="recordPerson != null  and recordPerson != ''"> and record_person = #{recordPerson}</if>
+            <if test="date != null "> and date = #{date}</if>
         </where>
     </select>
-    
+
     <select id="selectEnvironmentalrecordsByRecordID" parameterType="Long" resultMap="EnvironmentalrecordsResult">
         <include refid="selectEnvironmentalrecordsVo"/>
         where recordID = #{recordID}
     </select>
-        
+
     <insert id="insertEnvironmentalrecords" parameterType="Environmentalrecords" useGeneratedKeys="true" keyProperty="recordID">
         insert into environmentalrecords
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="recordTime != null">recordTime,</if>
             <if test="environmentalStatus != null">environmentalStatus,</if>
             <if test="remarks != null">remarks,</if>
-         </trim>
+            <if test="location != null">location,</if>
+            <if test="recordPerson != null">record_person,</if>
+            <if test="date != null">date,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="recordTime != null">#{recordTime},</if>
             <if test="environmentalStatus != null">#{environmentalStatus},</if>
             <if test="remarks != null">#{remarks},</if>
-         </trim>
+            <if test="location != null">#{location},</if>
+            <if test="recordPerson != null">#{recordPerson},</if>
+            <if test="date != null">#{date},</if>
+        </trim>
     </insert>
 
     <update id="updateEnvironmentalrecords" parameterType="Environmentalrecords">
@@ -49,6 +61,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="recordTime != null">recordTime = #{recordTime},</if>
             <if test="environmentalStatus != null">environmentalStatus = #{environmentalStatus},</if>
             <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="recordPerson != null">record_person = #{recordPerson},</if>
+            <if test="date != null">date = #{date},</if>
         </trim>
         where recordID = #{recordID}
     </update>
@@ -58,7 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteEnvironmentalrecordsByRecordIDs" parameterType="String">
-        delete from environmentalrecords where recordID in 
+        delete from environmentalrecords where recordID in
         <foreach item="recordID" collection="array" open="(" separator="," close=")">
             #{recordID}
         </foreach>

@@ -17,6 +17,14 @@
           placeholder="请选择发布时间">
         </el-date-picker>
       </el-form-item>
+      <el-form-item label="作者" prop="author">
+        <el-input
+          v-model="queryParams.author"
+          placeholder="请输入作者"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -78,6 +86,7 @@
           <span>{{ parseTime(scope.row.publishedAt, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="作者" align="center" prop="author" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -123,6 +132,9 @@
             placeholder="请选择发布时间">
           </el-date-picker>
         </el-form-item>
+        <el-form-item label="作者" prop="author">
+          <el-input v-model="form.author" placeholder="请输入作者" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -134,6 +146,7 @@
 
 <script>
 import { listAnnouncements, getAnnouncements, delAnnouncements, addAnnouncements, updateAnnouncements } from "@/api/Announcement/announcements";
+import {getInfo} from "@/api/login";
 
 export default {
   name: "Announcements",
@@ -163,7 +176,9 @@ export default {
         pageSize: 10,
         title: null,
         content: null,
-        publishedAt: null
+        publishedAt: null,
+        author: null,
+        authorId: null
       },
       // 表单参数
       form: {},
@@ -202,7 +217,9 @@ export default {
         announcementID: null,
         title: null,
         content: null,
-        publishedAt: null
+        publishedAt: null,
+        author: null,
+        authorId: null
       };
       this.resetForm("form");
     },
@@ -225,7 +242,13 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.open = true;
+      getInfo().then((response)=>{
+        this.form.author = response.user.nickName;
+        this.form.authorId = response.user.userId;
+        this.form.publishedAt = new Date();
+        this.open = true;
+      })
+
       this.title = "添加公告管理";
     },
     /** 修改按钮操作 */
