@@ -46,6 +46,8 @@ public class Complaints extends BaseEntity
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updatedAt;
 
+
+
     public void setComplaintID(Long complaintID) 
     {
         this.complaintID = complaintID;

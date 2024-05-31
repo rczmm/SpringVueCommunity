@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.EventsMapper">
-    
+
     <resultMap type="Events" id="EventsResult">
         <result property="eventID"    column="eventID"    />
         <result property="name"    column="name"    />
@@ -13,30 +13,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="status"    column="status"    />
         <result property="createdAt"    column="createdAt"    />
         <result property="updatedAt"    column="updatedAt"    />
+        <result property="personName"    column="person_name"    />
+        <result property="personId"    column="person_id"    />
     </resultMap>
 
     <sql id="selectEventsVo">
-        select eventID, name, dateTime, location, description, status, createdAt, updatedAt from events
+        select eventID, name, dateTime, location, description, status, createdAt, updatedAt, person_name, person_id from events
     </sql>
 
     <select id="selectEventsList" parameterType="Events" resultMap="EventsResult">
-        select eventID, name, dateTime, location, substring(description,1,20), status, createdAt, updatedAt from events
-        <where>  
+        <include refid="selectEventsVo"/>
+        <where>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="dateTime != null "> and dateTime = #{dateTime}</if>
             <if test="location != null  and location != ''"> and location = #{location}</if>
-            <if test="description != null  and description != ''"> description = #{description}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="createdAt != null "> and createdAt = #{createdAt}</if>
             <if test="updatedAt != null "> and updatedAt = #{updatedAt}</if>
+            <if test="personName != null  and personName != ''"> and person_name like concat('%', #{personName}, '%')</if>
+            <if test="personId != null "> and person_id = #{personId}</if>
         </where>
     </select>
-    
+
     <select id="selectEventsByEventID" parameterType="Long" resultMap="EventsResult">
         <include refid="selectEventsVo"/>
         where eventID = #{eventID}
     </select>
-        
+
     <insert id="insertEvents" parameterType="Events" useGeneratedKeys="true" keyProperty="eventID">
         insert into events
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -47,7 +51,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status,</if>
             <if test="createdAt != null">createdAt,</if>
             <if test="updatedAt != null">updatedAt,</if>
-         </trim>
+            <if test="personName != null and personName != ''">person_name,</if>
+            <if test="personId != null">person_id,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">#{name},</if>
             <if test="dateTime != null">#{dateTime},</if>
@@ -56,7 +62,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">#{status},</if>
             <if test="createdAt != null">#{createdAt},</if>
             <if test="updatedAt != null">#{updatedAt},</if>
-         </trim>
+            <if test="personName != null and personName != ''">#{personName},</if>
+            <if test="personId != null">#{personId},</if>
+        </trim>
     </insert>
 
     <update id="updateEvents" parameterType="Events">
@@ -69,6 +77,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status = #{status},</if>
             <if test="createdAt != null">createdAt = #{createdAt},</if>
             <if test="updatedAt != null">updatedAt = #{updatedAt},</if>
+            <if test="personName != null and personName != ''">person_name = #{personName},</if>
+            <if test="personId != null">person_id = #{personId},</if>
         </trim>
         where eventID = #{eventID}
     </update>
@@ -78,7 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteEventsByEventIDs" parameterType="String">
-        delete from events where eventID in 
+        delete from events where eventID in
         <foreach item="eventID" collection="array" open="(" separator="," close=")">
             #{eventID}
         </foreach>

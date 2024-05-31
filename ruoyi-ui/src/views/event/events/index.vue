@@ -9,12 +9,12 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="活动时间" prop="dateTime">
+      <el-form-item label="日期" prop="dateTime">
         <el-date-picker clearable
-          v-model="queryParams.dateTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择活动时间">
+                        v-model="queryParams.dateTime"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择日期">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="地点" prop="location">
@@ -27,19 +27,35 @@
       </el-form-item>
       <el-form-item label="创建时间" prop="createdAt">
         <el-date-picker clearable
-          v-model="queryParams.createdAt"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择创建时间">
+                        v-model="queryParams.createdAt"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择创建时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="更新时间" prop="updatedAt">
         <el-date-picker clearable
-          v-model="queryParams.updatedAt"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择更新时间">
+                        v-model="queryParams.updatedAt"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择更新时间">
         </el-date-picker>
+      </el-form-item>
+      <el-form-item label="申请人" prop="personName">
+        <el-input
+          v-model="queryParams.personName"
+          placeholder="请输入申请人"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="申请人id" prop="personId">
+        <el-input
+          v-model="queryParams.personId"
+          placeholder="请输入申请人id"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -55,7 +71,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['event:events:add']"
+          v-hasPermi="['system:events:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -66,7 +82,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['event:events:edit']"
+          v-hasPermi="['system:events:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -77,7 +93,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['event:events:remove']"
+          v-hasPermi="['system:events:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -87,7 +103,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['event:events:export']"
+          v-hasPermi="['system:events:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -95,46 +111,47 @@
 
     <el-table v-loading="loading" :data="eventsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="活动ID" align="center" prop="eventID" />
-      <el-table-column label="活动名" align="center" prop="name" />
-      <el-table-column label="活动时间" align="center" prop="dateTime" width="180">
-        <template slot-scope="scope">
+      <el-table-column label="编号" align="center" prop="eventID" />
+      <el-table-column label="活动名" align="center" prop="name" show-overflow-tooltip/>
+      <el-table-column label="日期" align="center" prop="dateTime" width="180">
+        <template v-slot="scope">
           <span>{{ parseTime(scope.row.dateTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="地点" align="center" prop="location" />
-      <el-table-column label="描述" align="center" prop="description" />
+      <el-table-column label="地点" align="center" prop="location" show-overflow-tooltip />
+      <el-table-column label="描述" align="center" prop="description" show-overflow-tooltip/>
       <el-table-column label="状态" align="center" prop="status" />
       <el-table-column label="创建时间" align="center" prop="createdAt" width="180">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span>{{ parseTime(scope.row.createdAt, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" align="center" prop="updatedAt" width="180">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span>{{ parseTime(scope.row.updatedAt, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="负责人" align="center" prop="personName" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['event:events:edit']"
+            v-hasPermi="['system:events:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['event:events:remove']"
+            v-hasPermi="['system:events:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -149,12 +166,12 @@
         <el-form-item label="活动名" prop="name">
           <el-input v-model="form.name" placeholder="请输入活动名" />
         </el-form-item>
-        <el-form-item label="活动时间" prop="dateTime">
+        <el-form-item label="日期" prop="dateTime">
           <el-date-picker clearable
-            v-model="form.dateTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择活动时间">
+                          v-model="form.dateTime"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="地点" prop="location">
@@ -162,6 +179,28 @@
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="创建时间" prop="createdAt">
+          <el-date-picker clearable
+                          v-model="form.createdAt"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择创建时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="更新时间" prop="updatedAt">
+          <el-date-picker clearable
+                          v-model="form.updatedAt"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择更新时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="申请人" prop="personName">
+          <el-input v-model="form.personName" placeholder="请输入申请人" />
+        </el-form-item>
+        <el-form-item label="申请人id" prop="personId">
+          <el-input v-model="form.personId" placeholder="请输入申请人id" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -207,7 +246,9 @@ export default {
         description: null,
         status: null,
         createdAt: null,
-        updatedAt: null
+        updatedAt: null,
+        personName: null,
+        personId: null
       },
       // 表单参数
       form: {},
@@ -217,7 +258,10 @@ export default {
           { required: true, message: "活动名不能为空", trigger: "blur" }
         ],
         dateTime: [
-          { required: true, message: "活动时间不能为空", trigger: "blur" }
+          { required: true, message: "日期不能为空", trigger: "blur" }
+        ],
+        personName: [
+          { required: true, message: "申请人不能为空", trigger: "blur" }
         ],
       }
     };
@@ -250,7 +294,9 @@ export default {
         description: null,
         status: null,
         createdAt: null,
-        updatedAt: null
+        updatedAt: null,
+        personName: null,
+        personId: null
       };
       this.resetForm("form");
     },
@@ -318,7 +364,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('event/events/export', {
+      this.download('system/events/export', {
         ...this.queryParams
       }, `events_${new Date().getTime()}.xlsx`)
     }

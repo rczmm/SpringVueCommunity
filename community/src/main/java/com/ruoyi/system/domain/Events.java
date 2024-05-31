@@ -51,6 +51,14 @@ public class Events extends BaseEntity
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updatedAt;
 
+    /** 申请人 */
+    @Excel(name = "申请人")
+    private String personName;
+
+    /** 申请人id */
+    @Excel(name = "申请人id")
+    private Long personId;
+
     public void setEventID(Long eventID) 
     {
         this.eventID = eventID;
@@ -124,6 +132,22 @@ public class Events extends BaseEntity
         return updatedAt;
     }
 
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
+    }
+
+    public Long getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(Long personId) {
+        this.personId = personId;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -135,6 +159,8 @@ public class Events extends BaseEntity
             .append("status", getStatus())
             .append("createdAt", getCreatedAt())
             .append("updatedAt", getUpdatedAt())
+                .append("personName", getPersonName())
+                .append("personId", getPersonId())
             .toString();
     }
 }

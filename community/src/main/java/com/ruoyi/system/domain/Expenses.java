@@ -43,7 +43,20 @@ public class Expenses extends BaseEntity
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updatedAt;
 
-    public void setExpenseID(Long expenseID) 
+    /** 用户 */
+    @Excel(name = "用户")
+    private Long userId;
+
+    public Expenses(String expenseType, BigDecimal amount, String paymentStatus, Long userId) {
+        this.expenseType = expenseType;
+        this.amount = amount;
+        this.paymentStatus = paymentStatus;
+        this.userId = userId;
+    }
+
+    public Expenses() {
+    }
+    public void setExpenseID(Long expenseID)
     {
         this.expenseID = expenseID;
     }
@@ -98,6 +111,16 @@ public class Expenses extends BaseEntity
         return updatedAt;
     }
 
+    public void setUserId(Long userId)
+    {
+        this.userId = userId;
+    }
+
+    public Long getUserId()
+    {
+        return userId;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -106,7 +129,8 @@ public class Expenses extends BaseEntity
             .append("amount", getAmount())
             .append("paymentStatus", getPaymentStatus())
             .append("createdAt", getCreatedAt())
-            .append("updatedAt", getUpdatedAt())
+            .append("updatedAt", getUpdatedAt()).append("userId", getUserId())
             .toString();
     }
+
 }

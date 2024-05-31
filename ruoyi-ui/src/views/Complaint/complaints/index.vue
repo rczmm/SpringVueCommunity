@@ -231,6 +231,7 @@ import {
 } from "@/api/Complaint/complaints";
 
 import {addHandlingrecords, listHandlingrecords} from "@/api/Complaint/handlingrecords";
+import {getInfo} from "@/api/login";
 
 export default {
   name: "Complaints",
@@ -381,20 +382,22 @@ export default {
     },
     // 去处理按钮操作
     handlingRecords(row) {
-      this.openRecord = true;
+      getInfo().then(reponse=>{
+        this.recordForm.handlerName = reponse.user.nickName;
+        this.openRecord = true;
+      })
+
       this.recordForm.complaintID = row.complaintID;
       this.recordForm.handleTime = new Date();
     },
     // 提交处理记录按钮
     submitFormRecord() {
-      this.$refs["formRecord"].validate(valid => {
-        if (valid) {
-          addHandlingrecords(this.recordForm).then(Response => {
-            this.$modal.msgSuccess("处理完毕");
-            this.openRecord = false;
-          })
-        }
-      });
+      console.log(this.recordForm)
+      addHandlingrecords(this.recordForm).then(Response => {
+        this.$modal.msgSuccess("处理完毕");
+        this.openRecord = false;
+      })
+      this.recordForm = [];
     },
     /** 提交按钮 */
     submitForm() {

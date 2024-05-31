@@ -19,18 +19,18 @@
       </el-form-item>
       <el-form-item label="创建时间" prop="createdAt">
         <el-date-picker clearable
-          v-model="queryParams.createdAt"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择创建时间">
+                        v-model="queryParams.createdAt"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择创建时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="更新时间" prop="updatedAt">
         <el-date-picker clearable
-          v-model="queryParams.updatedAt"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择更新时间">
+                        v-model="queryParams.updatedAt"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择更新时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -48,7 +48,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['Maintenance:maintenancerequests:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -59,7 +60,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['Maintenance:maintenancerequests:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -70,7 +72,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['Maintenance:maintenancerequests:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -80,18 +83,19 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['Maintenance:maintenancerequests:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="maintenancerequestsList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="报修ID" align="center" prop="requestID" />
-      <el-table-column label="报修人姓名" align="center" prop="requesterName" />
-      <el-table-column label="联系方式" align="center" prop="requesterContact" />
-      <el-table-column label="报修内容" align="center" prop="requestContent" />
-      <el-table-column label="状态" align="center" prop="status" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="报修ID" align="center" prop="requestID"/>
+      <el-table-column label="报修人姓名" align="center" prop="requesterName"/>
+      <el-table-column label="联系方式" align="center" prop="requesterContact"/>
+      <el-table-column label="报修内容" align="center" prop="requestContent"/>
+      <el-table-column label="状态" align="center" prop="status"/>
       <el-table-column label="创建时间" align="center" prop="createdAt" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createdAt, '{y}-{m}-{d}') }}</span>
@@ -110,18 +114,28 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['Maintenance:maintenancerequests:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['Maintenance:maintenancerequests:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleView(scope.row)"
+            v-hasPermi="['Maintenance:maintenancerecords:add']"
+          >维修
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -134,28 +148,28 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="报修人姓名" prop="requesterName">
-          <el-input v-model="form.requesterName" placeholder="请输入报修人姓名" />
+          <el-input v-model="form.requesterName" placeholder="请输入报修人姓名"/>
         </el-form-item>
         <el-form-item label="联系方式" prop="requesterContact">
-          <el-input v-model="form.requesterContact" placeholder="请输入联系方式" />
+          <el-input v-model="form.requesterContact" placeholder="请输入联系方式"/>
         </el-form-item>
         <el-form-item label="报修内容">
           <editor v-model="form.requestContent" :min-height="192"/>
         </el-form-item>
         <el-form-item label="创建时间" prop="createdAt">
           <el-date-picker clearable
-            v-model="form.createdAt"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择创建时间">
+                          v-model="form.createdAt"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择创建时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="更新时间" prop="updatedAt">
           <el-date-picker clearable
-            v-model="form.updatedAt"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择更新时间">
+                          v-model="form.updatedAt"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择更新时间">
           </el-date-picker>
         </el-form-item>
       </el-form>
@@ -164,11 +178,42 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog :title="title" :visible.sync="openRecord" width="500px" append-to-body>
+      <el-form ref="form" :model="recordForm" :rules="rules" label-width="80px">
+        <el-form-item label="维修人姓名" prop="repairerName">
+          <el-input v-model="recordForm.repairerName" placeholder="请输入维修人姓名"/>
+        </el-form-item>
+        <el-form-item label="维修时间" prop="repairTime">
+          <el-date-picker clearable
+                          v-model="recordForm.repairTime"
+                          type="date"
+                          value-format="yyyy-MM-dd hh:mm:ss"
+                          placeholder="请选择维修时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="维修结果" prop="repairResult">
+          <el-input v-model="recordForm.repairResult" type="textarea" placeholder="请输入内容"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="repairResult">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listMaintenancerequests, getMaintenancerequests, delMaintenancerequests, addMaintenancerequests, updateMaintenancerequests } from "@/api/Maintenance/maintenancerequests";
+import {
+  addMaintenancerequests,
+  delMaintenancerequests,
+  getMaintenancerequests,
+  listMaintenancerequests,
+  updateMaintenancerequests
+} from "@/api/Maintenance/maintenancerequests";
+import {addMaintenancerecords} from "@/api/Maintenance/maintenancerecords";
+import {getInfo} from "@/api/login";
 
 export default {
   name: "Maintenancerequests",
@@ -208,15 +253,25 @@ export default {
       // 表单校验
       rules: {
         requesterName: [
-          { required: true, message: "报修人姓名不能为空", trigger: "blur" }
+          {required: true, message: "报修人姓名不能为空", trigger: "blur"}
         ],
         requesterContact: [
-          { required: true, message: "联系方式不能为空", trigger: "blur" }
+          {required: true, message: "联系方式不能为空", trigger: "blur"}
         ],
         requestContent: [
-          { required: true, message: "报修内容不能为空", trigger: "blur" }
+          {required: true, message: "报修内容不能为空", trigger: "blur"}
         ],
-      }
+      },
+      //
+      recordForm: {
+        recordID: null,
+        requestID: null,
+        repairerName: null,
+        repairTime: null,
+        repairResult: null
+      },
+      //
+      openRecord: false
     };
   },
   created() {
@@ -234,8 +289,27 @@ export default {
     },
     // 取消按钮
     cancel() {
-      this.open = false;
+      this.openRecord = false;
       this.reset();
+    },
+    //
+    handleView(row) {
+      this.openRecord = true;
+      getInfo().then(reponse => {
+        this.recordForm.requestID = row.requestID;
+        this.recordForm.repairerName = reponse.user.nickName;
+        this.recordForm.repairTime = new Date();
+        console.log(this.recordForm);
+        })
+    },
+    // 维修按钮
+    repairResult(row) {
+        addMaintenancerecords(this.recordForm).then(response => {
+          this.$modal.msgSuccess("维修成功");
+          this.open = false;
+          this.getList();
+        });
+
     },
     // 表单重置
     reset() {
@@ -263,7 +337,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.requestID)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -305,12 +379,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const requestIDs = row.requestID || this.ids;
-      this.$modal.confirm('是否确认删除报修管理编号为"' + requestIDs + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除报修管理编号为"' + requestIDs + '"的数据项？').then(function () {
         return delMaintenancerequests(requestIDs);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {

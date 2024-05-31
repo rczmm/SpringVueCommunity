@@ -35,10 +35,10 @@
       </el-form-item>
       <el-form-item label="报名时间" prop="registeredAt">
         <el-date-picker clearable
-          v-model="queryParams.registeredAt"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择报名时间">
+                        v-model="queryParams.registeredAt"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择报名时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -56,7 +56,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['event:registrations:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -67,7 +68,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['event:registrations:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -78,7 +80,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['event:registrations:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -88,18 +91,18 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['event:registrations:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="registrationsList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="报名ID" align="center" prop="registrationID" />
-      <el-table-column label="活动ID" align="center" prop="eventID" />
-      <el-table-column label="报名人" align="center" prop="participantName" />
-      <el-table-column label="联系方式" align="center" prop="participantContact" />
-      <el-table-column label="报名人数" align="center" prop="participantCount" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="活动ID" align="center" prop="eventID"/>
+      <el-table-column label="报名人" align="center" prop="participantName"/>
+      <el-table-column label="联系方式" align="center" prop="participantContact"/>
+      <el-table-column label="报名人数" align="center" prop="participantCount"/>
       <el-table-column label="报名时间" align="center" prop="registeredAt" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.registeredAt, '{y}-{m}-{d}') }}</span>
@@ -113,18 +116,31 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['event:registrations:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['event:registrations:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleList(scope.row)"
+            v-hasPermi="['event:registrations:list']"
+          >报名情况
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
+    <h3>活动报名树表</h3>
+    <el-tree :data="registrationsTree"></el-tree>
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -137,23 +153,23 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="活动ID" prop="eventID">
-          <el-input v-model="form.eventID" placeholder="请输入活动ID" />
+          <el-input v-model="form.eventID" placeholder="请输入活动ID"/>
         </el-form-item>
         <el-form-item label="报名人" prop="participantName">
-          <el-input v-model="form.participantName" placeholder="请输入报名人" />
+          <el-input v-model="form.participantName" placeholder="请输入报名人"/>
         </el-form-item>
         <el-form-item label="联系方式" prop="participantContact">
-          <el-input v-model="form.participantContact" placeholder="请输入联系方式" />
+          <el-input v-model="form.participantContact" placeholder="请输入联系方式"/>
         </el-form-item>
         <el-form-item label="报名人数" prop="participantCount">
-          <el-input v-model="form.participantCount" placeholder="请输入报名人数" />
+          <el-input v-model="form.participantCount" placeholder="请输入报名人数"/>
         </el-form-item>
         <el-form-item label="报名时间" prop="registeredAt">
           <el-date-picker clearable
-            v-model="form.registeredAt"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择报名时间">
+                          v-model="form.registeredAt"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择报名时间">
           </el-date-picker>
         </el-form-item>
       </el-form>
@@ -162,11 +178,28 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog :visible.sync="openEChart" width="300px" append-to-body>
+      <el-timeline>
+        <el-timeline-item
+          v-for="(option, index) in options"
+          :key="index"
+          :timestamp="option.timestamp">
+          {{ option.content }}
+        </el-timeline-item>
+      </el-timeline>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listRegistrations, getRegistrations, delRegistrations, addRegistrations, updateRegistrations } from "@/api/event/registrations";
+import {
+  addRegistrations,
+  delRegistrations,
+  getRegistrations,
+  listRegistrations,
+  updateRegistrations
+} from "@/api/event/registrations";
 
 export default {
   name: "Registrations",
@@ -205,24 +238,47 @@ export default {
       // 表单校验
       rules: {
         eventID: [
-          { required: true, message: "活动ID不能为空", trigger: "blur" }
+          {required: true, message: "活动ID不能为空", trigger: "blur"}
         ],
         participantName: [
-          { required: true, message: "报名人不能为空", trigger: "blur" }
+          {required: true, message: "报名人不能为空", trigger: "blur"}
         ],
         participantContact: [
-          { required: true, message: "联系方式不能为空", trigger: "blur" }
+          {required: true, message: "联系方式不能为空", trigger: "blur"}
         ],
         participantCount: [
-          { required: true, message: "报名人数不能为空", trigger: "blur" }
+          {required: true, message: "报名人数不能为空", trigger: "blur"}
         ],
-      }
+      },
+      // 活动
+      openEChart: false,
+      // 活动报名时间线
+      options: [],
+      // 活动报名树表
+      registrationsTree: []
     };
   },
   created() {
     this.getList();
   },
   methods: {
+    // 活动报名时间线
+    handleList(item) {
+      this.options = [];
+      for (let data of this.registrationsList) {
+        if (data.eventID === item.eventID && data.participantName === item.participantName) {
+          console.log(data)
+          this.options.push(
+            {
+              content: data.participantName,
+              timestamp: data.registeredAt
+            }
+          )
+        }
+      };
+      console.log(this.options)
+      this.openEChart = true;
+    },
     /** 查询活动报名列表 */
     getList() {
       this.loading = true;
@@ -230,6 +286,19 @@ export default {
         this.registrationsList = response.rows;
         this.total = response.total;
         this.loading = false;
+        let treeRoot = {label: 'Root', children: []};
+        this.registrationsList.forEach(item => {
+          let eventNode = treeRoot.children.find(node => node.label === item.eventID);
+          if (!eventNode) {
+            eventNode = {label: item.eventID, children: []};
+            treeRoot.children.push(eventNode);
+          }
+          if (!eventNode.children.some(child => child.label === item.participantName)) {
+            eventNode.children.push({label: item.participantName, children: []});
+          }
+          this.registrationsTree = treeRoot.children;
+          console.log(this.registrationsTree)
+        });
       });
     },
     // 取消按钮
@@ -262,7 +331,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.registrationID)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -304,12 +373,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const registrationIDs = row.registrationID || this.ids;
-      this.$modal.confirm('是否确认删除活动报名编号为"' + registrationIDs + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除活动报名编号为"' + registrationIDs + '"的数据项？').then(function () {
         return delRegistrations(registrationIDs);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {

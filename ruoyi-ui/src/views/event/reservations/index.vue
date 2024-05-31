@@ -152,9 +152,20 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['event:reservations:remove']"
           >删除</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleList(scope.row)"
+            v-hasPermi="['event:reservations:list']"
+          >预约情况
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <h3>活动预约树表</h3>
+    <el-tree :data="reservationsTree"></el-tree>
 
     <pagination
       v-show="total>0"
@@ -213,6 +224,17 @@
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
+    </el-dialog>
+
+    <el-dialog :visible.sync="openEChart" width="300px" append-to-body>
+      <el-timeline>
+        <el-timeline-item
+          v-for="(option, index) in options"
+          :key="index"
+          :timestamp="option.timestamp">
+          {{ option.content }}
+        </el-timeline-item>
+      </el-timeline>
     </el-dialog>
   </div>
 </template>
@@ -274,13 +296,37 @@ export default {
         endTime: [
           { required: true, message: "结束时间不能为空", trigger: "blur" }
         ],
-      }
+      },
+      // 活动
+      openEChart: false,
+      // 活动报名时间线
+      options: [],
+      // 活动报名树表
+      reservationsTree: []
     };
   },
   created() {
     this.getList();
   },
   methods: {
+    // 活动预约时间线
+    handleList(item) {
+      this.options = [];
+      for (let data of this.reservationsList) {
+        if (data.eventID === item.eventID && data.reserverName === item.reserverName) {
+          console.log(data)
+          this.options.push(
+            {
+              content: data.reserverName,
+              timestamp: data.updatedAt
+            }
+          )
+        }
+      }
+      ;
+      console.log(this.options)
+      this.openEChart = true;
+    },
     /** 查询活动预约列表 */
     getList() {
       this.loading = true;
@@ -288,6 +334,18 @@ export default {
         this.reservationsList = response.rows;
         this.total = response.total;
         this.loading = false;
+        let treeRoot = {label: 'Root', children: []};
+        this.reservationsList.forEach(item => {
+          let eventNode = treeRoot.children.find(node => node.label === item.eventID);
+          if (!eventNode) {
+            eventNode = {label: item.eventID, children: []};
+            treeRoot.children.push(eventNode);
+          }
+          if (!eventNode.children.some(child => child.label === item.reserverName)) {
+            eventNode.children.push({label: item.reserverName, children: []});
+          }
+          this.reservationsTree = treeRoot.children;
+        });
       });
     },
     // 取消按钮
