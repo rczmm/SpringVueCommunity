@@ -18,10 +18,10 @@
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="status" placeholder="请选择状态">
+        <el-select v-model="queryParams.status" clearable placeholder="请选择状态">
           <el-option
-            v-for="(item,index) in status"
-            :key="index"
+            v-for="item in status"
+            :key="item.value"
             :label="item.label"
             :value="item.value">
           </el-option>
@@ -262,7 +262,7 @@ export default {
         complainantName: null,
         complainantContact: null,
         complaintContent: null,
-        status: null,
+        status: "待处理",
         createdAt: null,
         updatedAt: null
       },
@@ -306,13 +306,13 @@ export default {
       status: [
         {
           "label": "处理中",
-          "value": 0
+          "value": "处理中"
         }, {
           "label": "待处理",
-          "value": 0
+          "value": "待处理"
         }, {
           "label": "已处理",
-          "value": 0
+          "value": "已处理"
         }
       ]
     };
@@ -397,7 +397,7 @@ export default {
         this.$modal.msgSuccess("处理完毕");
         this.openRecord = false;
       })
-      this.recordForm = [];
+      this.recordForm = {};
     },
     /** 提交按钮 */
     submitForm() {

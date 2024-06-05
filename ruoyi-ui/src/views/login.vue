@@ -1,8 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title"><el-link href="/index-home.html">社区人口管理系统</el-link></h3>
-
+      <h3 class="title">若依后台管理系统</h3>
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
@@ -54,12 +53,38 @@
           <router-link class="link-type" :to="'/register'">立即注册</router-link>
         </div>
       </el-form-item>
+      <!--  第三方应用登录 -->
+      <el-form-item style="width:100%;">
+        <div class="oauth-login" style="display:flex">
+          <div class="oauth-login-item" @click="doSocialLogin('gitee')">
+            <svg-icon icon-class="gitee" style="height:1.2em" />
+            <span>Gitee</span>
+          </div>
+          <div class="oauth-login-item" @click="doSocialLogin('github')">
+            <svg-icon icon-class="github" style="height:1.2em" />
+            <span>Github</span>
+          </div>
+          <div class="oauth-login-item">
+            <svg-icon icon-class="weixin" style="height:1.2em" />
+            <span>Weixin</span>
+          </div>
+          <div class="oauth-login-item">
+            <svg-icon icon-class="qq" style="height:1.2em" />
+            <span>QQ</span>
+          </div>
+        </div>
+      </el-form-item>
     </el-form>
+    <!--  底部  -->
+    <div class="el-login-footer">
+      <span>Copyright © 2018-2023 ruoyi.vip All Rights Reserved.</span>
+    </div>
   </div>
 </template>
 
 <script>
 import { getCodeImg } from "@/api/login";
+import { authBinding } from "@/api/system/auth";
 import Cookies from "js-cookie";
 import { encrypt, decrypt } from '@/utils/jsencrypt'
 
@@ -147,6 +172,11 @@ export default {
           });
         }
       });
+    },
+    doSocialLogin(source) {
+      authBinding(source).then(res => {
+        top.location.href = res.msg;
+      });
     }
   }
 };
@@ -212,5 +242,23 @@ export default {
 }
 .login-code-img {
   height: 38px;
+}
+.oauth-login {
+  display: flex;
+  align-items: cen;
+  cursor:pointer;
+}
+.oauth-login-item {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+.oauth-login-item img {
+  height: 25px;
+  width: 25px;
+}
+.oauth-login-item span:hover {
+  text-decoration: underline red;
+  color: red;
 }
 </style>

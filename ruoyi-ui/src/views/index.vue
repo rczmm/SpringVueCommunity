@@ -2,8 +2,8 @@
   <div class="app">
     <div class="carousel">
       <el-carousel :interval="4000" type="card" height="200px">
-        <el-carousel-item v-for="item in 6" :key="item">
-          <h3 class="medium">新闻</h3>
+        <el-carousel-item v-for="item in pictures" :key="item">
+          <img :src="item" alt="" style="max-width: 100%; height: auto;">
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -15,13 +15,14 @@
           <span>最近操作日志</span>
         </el-card>
         <el-timeline v-for="(operation_log, index) in operation_logList"
-                     :key="operation_log.id" v-if="index < 10">
+                     :key="operation_log.id" v-if="index < 5">
           <el-timeline-item :timestamp="operation_log.operTime"
-                            :type="Math.random() > 0.5 ? 'primary' : 'success'">
+                            :type="operation_log.jsonResult.code === 200 ? 'primary' : 'success'">
             <el-card>
-              <h4>{{ operation_log.method.replaceAll("ruoyi", "rcz") }}</h4>
+              <h4>请求方法：{{ operation_log.requestMethod }}</h4>
+              <p>请求地址：{{operation_log.operUrl}}</p>
               <p>{{ operation_log.operLocation }} {{ operation_log.operIp }}</p>
-              <p>{{ operation_log.deptName }} {{ operation_log.operName }} {{ operation_log.jsonResult }}</p>
+              <p>部门名：{{ operation_log.deptName }}  操作者：{{ operation_log.operName }}</p>
             </el-card>
           </el-timeline-item>
         </el-timeline>
@@ -52,6 +53,7 @@
 
 import {listAnnouncements} from "@/api/Announcement/announcements";
 import {list} from "@/api/monitor/operlog"
+import axios from "axios";
 
 export default {
   props: {
@@ -70,11 +72,19 @@ export default {
       announcementsList: [],
       // 操作日志数据
       operation_logList: [],
+      //
+      pictures :[
+        "/static/picture/天气之子.jpg",
+        "/static/picture/天气之子2.jpg",
+        "/static/picture/天气之子3.jpg",
+        "/static/picture/天气之子4.jpg",
+        "/static/picture/天气之子5.jpg",
+        "/static/picture/天气之子6.jpg"
+      ]
     };
   },
   created() {
     this.getList(); // 获取公告数据
-    console.log(this.announcementsList)
   },
   methods: {
     /** 查询列表 */
@@ -83,18 +93,18 @@ export default {
       listAnnouncements().then(response => {
         this.announcementsList = response.rows; // 将获取到的公告数据赋值给 announcementsList
         this.announcements_total = response.total;
+        this.announcementsList.reverse();
         this.loading = false; // 设置加载状态为 false
       }).catch(error => {
         console.error('Error while fetching announcements:', error);
         this.loading = false; // 出现错误时也要设置加载状态为 false
       });
       list().then(response => {
-        this.operation_logList = response.rows; // 将获取到的公告数据赋值给 announcementsList
+        this.operation_logList = response.rows;
         this.operation_log_total = response.total;
-        this.loading = false; // 设置加载状态为 false
+        this.loading = false;
       })
     },
-    // 其他方法...
   }
 };
 

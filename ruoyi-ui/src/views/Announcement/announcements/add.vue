@@ -3,7 +3,7 @@
   <el-card :title="title">
 
     <el-card>
-      <p>{{ this.title}} </p>
+      <p>{{ this.title }} </p>
     </el-card>
 
     <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -142,6 +142,7 @@ export default {
           }
         }
       });
+      this.reset();
     },
   }
 };

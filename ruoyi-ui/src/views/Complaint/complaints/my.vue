@@ -8,8 +8,7 @@
 " placement="top">
             <el-card>
               <p>编号：{{item.complaintID}}</p>
-              <p>投诉内容：{{ item.complaintContent }}</p>
-              <p>联系方式：{{ item.complainantContact }}</p>
+              投诉内容：<pre v-html="item.complaintContent"></pre>
               <p>状态：{{ item.status }}</p>
               <span>更新时间：{{ item.updatedAt }}</span>
               <el-button type="text"  @click="handleDelete(item.complaintID)" v-hasPermi="['Complaint:complaints:remove']">撤销</el-button>

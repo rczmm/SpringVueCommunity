@@ -1,6 +1,21 @@
 <template>
   <div class="app-container">
 
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item>
+        <el-input
+          v-model="queryParams.familyID"
+          placeholder="请输入家庭ID"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -10,7 +25,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['person:relationships:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -20,7 +36,8 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['person:relationships:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -39,13 +56,13 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="居民ID" prop="residentID">
-          <el-input v-model="form.residentID" placeholder="请输入居民ID" />
+          <el-input v-model="form.residentID" placeholder="请输入居民ID"/>
         </el-form-item>
         <el-form-item label="家庭ID" prop="familyID">
-          <el-input v-model="form.familyID" placeholder="请输入家庭ID" />
+          <el-input v-model="form.familyID" placeholder="请输入家庭ID"/>
         </el-form-item>
         <el-form-item label="与户主关系" prop="relationshipWithHead">
-          <el-input v-model="form.relationshipWithHead" placeholder="请输入与户主关系" />
+          <el-input v-model="form.relationshipWithHead" placeholder="请输入与户主关系"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -57,7 +74,13 @@
 </template>
 
 <script>
-import { listRelationships, getRelationships, delRelationships, addRelationships, updateRelationships } from "@/api/person/relationships";
+import {
+  listRelationships,
+  getRelationships,
+  delRelationships,
+  addRelationships,
+  updateRelationships
+} from "@/api/person/relationships";
 import {getResidents} from "@/api/person/residents";
 
 export default {
@@ -110,50 +133,53 @@ export default {
       //
       links: [],
       //
-      nodes:[],
+      nodes: [],
       //
-      nodeId:0
+      nodeId: 0
     };
   },
   created() {
     this.getList();
-    this.getOptions()
   },
   methods: {
     /** 查询关系信息列表 */
     getList() {
       this.loading = true;
+      this.familyIds = []
+      this.links = []
+      this.nodes = []
       listRelationships(this.queryParams).then(response => {
+        console.log(response)
         this.relationshipsList = response.data;
         this.loading = false;
-        for(const item of Object.keys(this.relationshipsList)){
+        for (const item of Object.keys(this.relationshipsList)) {
           this.familyIds.push(
-            {"name":item}
+            {"name": item}
           )
           this.nodes.push(
             {
-              "id":"f"+item,
-              "name":item,
+              "id": "f" + item,
+              "name": item,
               "symbolSize": 40,
-              "value":"家庭",
-              "category": item-1
+              "value": "家庭",
+              "category": item - 1
             }
           )
         }
-        for(const items of Object.values(this.relationshipsList)){
-          for(const item of items){
-            getResidents(item.residentID).then(response=>{
+        for (const items of Object.values(this.relationshipsList)) {
+          for (const item of items) {
+            getResidents(item.residentID).then(response => {
               const name = response.data.name;
               this.links.push(
-                {"source":"r"+item.residentID,"target":"f"+item.familyID,"category":item.relationshipWithHead}
+                {"source": "r" + item.residentID, "target": "f" + item.familyID, "category": item.relationshipWithHead}
               );
               this.nodes.push(
                 {
-                  "id":"r"+item.residentID,
-                  "name":name,
+                  "id": "r" + item.residentID,
+                  "name": name,
                   "symbolSize": 20,
                   "value": "居民",
-                  "category": item.familyID -1
+                  "category": item.familyID - 1
                 }
               )
             })
@@ -178,8 +204,8 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
       this.getList();
+      this.getOptions();
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -247,8 +273,9 @@ export default {
         ...this.queryParams
       }, `relationships_${new Date().getTime()}.xlsx`)
     },
-    //
+    // 重置表单
     getOptions() {
+      console.log(this.links)
       this.option = {
         title: {
           text: '人物与家庭关系图',
@@ -265,10 +292,10 @@ export default {
         animationEasingUpdate: 'quinticInOut',
         series: [
           {
-            name: 'Les Miserables',
+            name: '关系信息',
             type: 'graph',
             legendHoverLink: false,
-            layout: 'circular',
+            layout: 'force',
             data: this.nodes,
             links: this.links,
             categories: this.familyIds,
@@ -284,7 +311,7 @@ export default {
                 textStyle: {
                   fontSize: 14,
                 },
-                formatter:function(params){
+                formatter: function (params) {
                   return params.data.category;
                 }
               }
@@ -308,7 +335,7 @@ export default {
 </script>
 
 <style scoped>
-.chart{
+.chart {
   width: 100%;
   height: 400px;
 }

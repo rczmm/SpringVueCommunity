@@ -1,5 +1,7 @@
 <template>
+
 <div class="container">
+
   <el-row :gutter="10" class="mb8">
     <el-col :span="1.5">
       <el-button
@@ -17,7 +19,13 @@
   <el-card class="container">
     <el-table :data="maintenanceRequestList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="报修人" align="center" prop="requesterName"/>
+      <el-table-column label="报修人" align="center" prop="requesterName">
+        <template v-slot="{row}">
+          <el-button type="text" @click="showDetail(row)">
+            {{row.requesterName}}
+          </el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="联系方式" align="center" prop="requesterContact" show-overflow-tooltip/>
       <el-table-column label="报修内容" align="center" prop="requestContent" show-overflow-tooltip/>
       <el-table-column label="更新时间" align="center" prop="updatedAt" width="180">
@@ -49,12 +57,13 @@
            type="text"
            icon="el-icon-download"
            @click="handleDetail(scope.row)"
-           v-hasPermi="['Maintenance:maintenancerequests:list']"
+           v-hasPermi="['Maintenance:maintenancerecords:list']"
           >查看详情
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -63,6 +72,7 @@
       @pagination="getList"
     />
 
+    <!-- 新增维修对话框   -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="报修人" prop="requesterName">
@@ -90,6 +100,7 @@
     </el-dialog>
   </el-card>
 
+  <!-- 查看维修记录对话框  -->
   <el-dialog :title="title" :visible.sync="openDetail" width="500px" append-to-body>
     <el-timeline>
       <el-timeline-item
@@ -100,7 +111,31 @@
       </el-timeline-item>
     </el-timeline>
   </el-dialog>
+
+  <!-- 报修详情对话框 -->
+  <el-dialog title="" :visible.sync="dialogDetailVisible" width="500px" append-to-body>
+    <el-descriptions title="报修信息" direction="vertical" :column="2" border>
+      <el-descriptions-item label="报修人">
+        {{ currentRequest.requesterName }}
+      </el-descriptions-item>
+      <el-descriptions-item label="联系方式" >
+        {{ currentRequest.requesterContact}}
+      </el-descriptions-item>
+      <el-descriptions-item label="报修内容" :span="2" >
+        <pre v-html="currentRequest.requestContent"></pre>
+      </el-descriptions-item>
+      <el-descriptions-item label="更新时间">
+        {{currentRequest.updatedAt}}
+      </el-descriptions-item>
+      <el-descriptions-item label="状态">
+        <el-tag>
+          {{currentRequest.status}}
+        </el-tag>
+      </el-descriptions-item>
+    </el-descriptions>
+  </el-dialog>
 </div>
+
 </template>
 <script>
 import {getInfo} from "@/api/login";
@@ -156,6 +191,18 @@ export default {
       recordList :[],
       //
       openDetail: false,
+      //
+      currentRequest:{
+        requestID: null,
+        requesterName: null,
+        requesterContact: null,
+        requestContent: null,
+        status: null,
+        createdAt: null,
+        updatedAt: null
+      },
+      //
+      dialogDetailVisible:false
     };
   },
   async created() {
@@ -163,6 +210,11 @@ export default {
     this.getList(); // getInfo解决后立即调用getList
   },
   methods: {
+    showDetail(row){
+      this.title = "报修详情";
+      this.currentRequest = row;
+      this.dialogDetailVisible = true;
+    },
     // 获取用户信息
     async getInfo() {
       // 假设getInfo返回一个Promise

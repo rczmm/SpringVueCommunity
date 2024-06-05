@@ -71,7 +71,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:events:add']"
+          v-hasPermi="['event:events:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -82,7 +82,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:events:edit']"
+          v-hasPermi="['event:events:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -93,7 +93,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:events:remove']"
+          v-hasPermi="['event:events:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -103,7 +103,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:events:export']"
+          v-hasPermi="['event:events:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -213,6 +213,7 @@
 
 <script>
 import { listEvents, getEvents, delEvents, addEvents, updateEvents } from "@/api/event/events";
+import {getInfo} from "@/api/login";
 
 export default {
   name: "Events",
@@ -319,6 +320,12 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      getInfo().then(response=>{
+        this.form.createdAt = new Date()
+        this.form.updatedAt = new Date()
+        this.form.personName = response.user.nickName
+        this.form.personId = response.user.userId
+      })
       this.open = true;
       this.title = "添加活动";
     },
